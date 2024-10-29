@@ -1,0 +1,36 @@
+#
+# Copyright (C) 2024 Jeff Sharkey, http://jsharkey.org/
+# All Rights Reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Place this file at /etc/nftables.d/10-lxp.nft on OpenWrt devices
+# to be automatically applied after reload/reboot
+
+# Change the hard-coded IP address below to match your dongle config
+
+chain lxp_pre_forward {
+    type filter hook forward priority filter - 1; policy accept;
+    ip saddr 3.101.7.137 tcp flags psh jump lxp_dpi comment "LXP: Incoming"
+    ip daddr 3.101.7.137 tcp flags psh jump lxp_dpi comment "LXP: Outgoing"
+}
+
+chain lxp_dpi {
+    @ih,56,8 0xC1 accept comment "LXP: Ping"
+    @ih,56,8 0xC2 @ih,168,8 0x03 accept comment "LXP: Read Hold"
+    @ih,56,8 0xC2 @ih,168,8 0x04 accept comment "LXP: Read Input"
+    @ih,56,8 0xC2 @ih,168,8 0x10 @ih,256,32 0x0C000300 accept comment "LXP: Write date/time"
+    reject with tcp reset comment "LXP: Denied"
+}
