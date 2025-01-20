@@ -1,6 +1,7 @@
 This is a collection of Linux `nftables` firewall rules that perform deep packet inspection to limit the external attack surface of these popular solar hybrid inverters:
 
 * EG4 18kPV-12LV
+* EG4 12000XP
 * LuxPower LXP-LB-EU 12K
 
 See below for background information and examples of how to deploy these rules.
@@ -12,23 +13,21 @@ See below for background information and examples of how to deploy these rules.
 
 This assumes you're running an OpenWrt 22.03+ based router, which is after they migrated to an `nftables` based firewall.
 
-1. Confirm the cloud IP address configured in your MiCO IoTOS dongle, and edit the `10-lxp.nft` file in this repo to match your cloud IP address if needed.  More details are provided in the [EG4 Dongle Recovery Guide](https://eg4electronics.com/wp-content/uploads/2024/05/EG4-Dongle-Recovery-Guide.pdf).
+1. Gain SSH access to your OpenWrt router.
 
-2. Gain SSH access to your OpenWrt router.
-
-3. Copy the `10-lxp.nft` file to `/etc/nftables.d/10-lxp.nft` on the router, possibly using a command like this:
+1. Copy the `10-lxp.nft` file to `/etc/nftables.d/10-lxp.nft` on the router, possibly using a command like this:
 > ```
 > scp -O ~/Downloads/10-lxp.nft root@192.168.1.1:/etc/nftables.d/10-lxp.nft
 > ```
 
-4. Reload your firewall rules using `/etc/init.d/firewall reload` or by rebooting.
+1. Reload your firewall rules using `/etc/init.d/firewall reload` or by rebooting.
 
-5. Block suspicious DNS domains locally using `dnsmasq` rules in `/etc/config/dhcp`, or adding them to a NextDNS denylist:
+1. Block suspicious DNS domains locally using `dnsmasq` rules in `/etc/config/dhcp`, or adding them to a NextDNS denylist:
 > ```
 >    list server '/.fogcloud.io/'
 > ```
 
-6. Reload your DNS rules using `/etc/init.d/dnsmasq reload` or by rebooting.
+1. Reload your DNS rules using `/etc/init.d/dnsmasq reload` or by rebooting.
 
 ## Background
 

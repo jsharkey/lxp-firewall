@@ -23,8 +23,8 @@
 
 chain lxp_pre_forward {
     type filter hook forward priority filter - 1; policy accept;
-    ip saddr 3.101.7.137 tcp flags psh jump lxp_dpi comment "LXP: Incoming"
-    ip daddr 3.101.7.137 tcp flags psh jump lxp_dpi comment "LXP: Outgoing"
+    ip tcp sport 4346 tcp flags psh jump lxp_dpi comment "LXP: Incoming"
+    ip tcp dport 4346 tcp flags psh jump lxp_dpi comment "LXP: Outgoing"
 }
 
 chain lxp_dpi {
@@ -32,5 +32,6 @@ chain lxp_dpi {
     @ih,56,8 0xC2 @ih,168,8 0x03 accept comment "LXP: Read Hold"
     @ih,56,8 0xC2 @ih,168,8 0x04 accept comment "LXP: Read Input"
     @ih,56,8 0xC2 @ih,168,8 0x10 @ih,256,32 0x0C000300 accept comment "LXP: Write date/time"
+    @ih,56,8 0xC3 @ih,144,16 0x0700 accept comment "LXP: Param Version"
     reject with tcp reset comment "LXP: Denied"
 }
