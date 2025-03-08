@@ -23,8 +23,8 @@
 
 chain lxp_pre_forward {
     type filter hook forward priority filter - 1; policy accept;
-    ip tcp sport 4346 tcp flags psh jump lxp_dpi comment "LXP: Incoming"
-    ip tcp dport 4346 tcp flags psh jump lxp_dpi comment "LXP: Outgoing"
+    tcp sport 4346 tcp flags psh jump lxp_dpi comment "LXP: Incoming"
+    tcp dport 4346 tcp flags psh jump lxp_dpi comment "LXP: Outgoing"
 }
 
 chain lxp_dpi {
